@@ -4,6 +4,10 @@ function formatStrings(string) {
     if (typeof string != 'string') return
     let formattedS = string.trim();
     formattedS = formattedS.charAt(0).toUpperCase() + formattedS.slice(1);
+    if (string.length > 190) {
+        formattedS = formattedS.substring(0, 190);
+        formattedS = `${formattedS}...`
+    }
 
     return formattedS
 }

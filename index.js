@@ -10,11 +10,17 @@ const publisherWeeklyLink = "https://www.publishersweekly.com";
 const publisherWeekArchiveIndustryNews = "/pw/by-topic/industry-news/publisher-news/archive.html";
 const publisherWeekArchiveBooksExpo = "/pw/by-topic/industry-news/bea/archive.html";
 
-fetchNews(publisherWeekArchiveIndustryNews);
+setTimeout(() => {
+    console.log('waiting traffic...');
+    fetchNews(publisherWeekArchiveIndustryNews);
+}, 2000)
+
 fetchNews(publisherWeekArchiveBooksExpo);
 
 function fetchNews(category) {
     async function request() {
+        console.log("processing " + publisherWeeklyLink + category + "..");
+
         const res = await axios.get(`${publisherWeeklyLink}${category}`)
         return res.data
     }
@@ -29,7 +35,9 @@ function fetchNews(category) {
             const $article = $(element)
             const title = formatStrings($article.find('h3').text());
             const dateAndAuthor = $article.find('.article-list-byline-date').text();
-            const articleLink = $article.find('li a').attr('href');
+            const articleLink = $article.find('a').attr('href');
+            const imgLink = $article.find('.image-wrapper img').attr('data-lazysrc');
+            const description = formatStrings($article.find('p').text());
 
             let [author, date] = dateAndAuthor.split('|');
             author = author.replace(/By|by/, '');
@@ -37,11 +45,14 @@ function fetchNews(category) {
             source = `PublisherWeekly by ${formatStrings(author)}`;
             publishedDate = formatDate(date)
             link = `${publisherWeeklyLink}${articleLink}`
+            img = `${publisherWeeklyLink}${imgLink}`
 
             news.push({
                 title,
                 source,
                 link,
+                img,
+                description,
                 publishedDate
             });
 
@@ -64,5 +75,6 @@ function fetchNews(category) {
         }).catch((err) => {
             console.log(err);
         })
+
     })
 }
